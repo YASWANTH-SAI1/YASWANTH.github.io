@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz App with Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #quiz-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 300px;
+    }
+    #question-box {
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    #options-box button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 100%;
+      border: 1px solid #ccc;
+      background: #f4f4f4;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #options-box button:hover {
+      background-color: #d3d3d3;
+    }
+    #timer {
+      margin: 20px 0;
+      font-weight: bold;
+      color: #d9534f;
+    }
+    #next-btn {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #next-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="quiz-container">
+    <div id="question-box">Question will appear here</div>
+    <div id="options-box"></div>
+    <div id="timer">Time Left: <span id="time-left">30</span>s</div>
+    <button id="next-btn">Next</button>
+  </div>
+  <script>
+    const questions = [
+      {
+        question: "What is the capital of India?",
+        options: ["Paris", "Madrid", "New Delhi", "Rome"],
+        answer: 2 
+      },
+      {
+        question: "What is 2 + 2?",
+        options: ["3", "4", "5", "6"],
+        answer: 1
+      },
+      {
+        question: "What is the color of the sky?",
+        options: ["Green", "Blue", "Red", "Yellow"],
+        answer: 1 
+      }
+    ];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timeLeft = 30;
+    let timer;
+    function loadQuestion() {
+      const questionBox = document.getElementById("question-box");
+      const optionsBox = document.getElementById("options-box");
+      optionsBox.innerHTML = "";
+      questionBox.textContent = questions[currentQuestionIndex].question;
+      questions[currentQuestionIndex].options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.textContent = option;
+        button.onclick = () => checkAnswer(index);
+        optionsBox.appendChild(button);
+      });
+      resetTimer();
+    }
+    function checkAnswer(selectedIndex) {
+      if (selectedIndex === questions[currentQuestionIndex].answer) {
+        score++;
+      }
+      loadNextQuestion();
+    }
+    function loadNextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+    function startTimer() {
+      timer = setInterval(() => {
+        const timerDisplay = document.getElementById("time-left");
+        timerDisplay.textContent = timeLeft;
+        timeLeft--;
+        if (timeLeft < 0) {
+          clearInterval(timer);
+          alert("Time's up for this question!");
+          loadNextQuestion();
+        }
+      }, 1000);
+    }
+    function resetTimer() {
+      clearInterval(timer);
+      timeLeft = 30;
+      startTimer();
+    }
+    function endQuiz() {
+      clearInterval(timer);
+      alert(Quiz Over! Your score: ${score}/${questions.length});
+      document.getElementById("quiz-container").innerHTML = <h1>Quiz Finished</h1><p>Your score: ${score}/${questions.length}</p>;
+    }
+    document.getElementById("next-btn").onclick = loadNextQuestion;
+    loadQuestion();
+  </script>
+</body>
+</html>
